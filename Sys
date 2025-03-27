@@ -1,0 +1,148 @@
+//// COMPUTE THE MINIMUM OF TWO VALUES
+// This function takes two arguments and pushes the smaller of
+// them onto the stack. To call this function, you should:
+//   1. push two values onto the stack; and
+//   2. call this function with `call Sys.min 2`.
+// Before returning, the function pushes the result onto the
+// stack, so that, from the point of view of the callee, the
+// result is at the top of the stack.
+// Push to the stack the minimum of two arguments.
+//
+function Sys.min 0
+    // Your implementation goes here.
+    push argument 0
+    push argument 1
+    lt
+    if-goto ARG0_MIN
+    push argument 1
+    goto END
+label ARG0_MIN
+    push argument 0
+label END
+    return
+
+
+
+//// COMPUTE THE MAXIMUM OF TWO VALUES
+// This function takes two arguments and pushes the larger of
+// them onto the stack. To call this function, you should:
+//   1. push two values onto the stack; and
+//   2. call this function with `call Sys.max 2`.
+// Before returning, the function pushes the result onto the
+// stack, so that, from the point of view of the callee, the
+// result is at the top of the stack.
+// Push to the stack the minimum of two arguments.
+//
+function Sys.max 0
+    // Your implementation goes here.
+    push argument 0
+    push argument 1
+    gt
+    if-goto ARG0_MAX
+    push argument 1
+    goto END
+label ARG0_MAX
+    push argument 0
+label END
+    return
+
+
+
+//// COMPUTE THE RANGE OF AN ARRAY.
+// This function takes two arguments, representing an array of
+// integers, and returns the range of the array onto the stack.
+// The two arguments are:
+//   ARG0 - memory location where the array starts, and
+//   ARG1 - number of elements in the array.
+// To call this function, you should:
+//   1. push the address of the first array elementonto the stack;
+//   2. push the number of array elements onto the stack; and
+//   2. call this function with `call Sys.range 2`.
+// Before returning, the function pushes the result onto the
+// stack, so that, from the point of view of the callee, the
+// result is at the top of the stack.
+//
+function Sys.range 2
+    // Your implementation goes here.
+    push argument 1
+    push constant 1
+    lt
+    if-goto RETURN_ZERO
+
+    // Initialize pointers and load first array element
+    push argument 0        // Load the address of the first element
+    pop pointer 1
+    push that 0            // Load the first element
+    pop local 0            // Set local 0 as the initial min
+    push that 0            // Set local 1 as the initial max
+    pop local 1
+
+    // Start iterating over the array
+    push argument 1
+    push constant 1
+    sub
+    pop temp 0             // temp 0 = n - 1 (number of iterations)
+
+label LOOP
+    push temp 0
+    push constant 0
+    eq
+    if-goto COMPUTE_RANGE
+
+    // Load the next array element
+    push argument 0
+    push temp 0
+    add
+    pop pointer 1
+    push that 0
+    pop temp 1             // temp 1 = current array element
+
+    // Compute the new min using Sys.min
+    push temp 1
+    push local 0
+    call Sys.min 2
+    pop local 0            // Update min value
+
+    // Compute the new max using Sys.max
+    push temp 1
+    push local 1
+    call Sys.max 2
+    pop local 1            // Update max value
+
+    // Decrement loop counter
+    push temp 0
+    push constant 1
+    sub
+    pop temp 0
+    goto LOOP
+
+label COMPUTE_RANGE
+    // Compute the range (max - min)
+    push local 1
+    push local 0
+    sub
+    goto RETURN
+
+label RETURN_ZERO
+    push constant 0
+    goto RETURN
+
+label RETURN
+    return
+
+
+// The emulator will start executing from here. You can modify
+// the code below while testing and debugging your code, but
+// please revert your changes before submitting to Gradescope;
+// otherwise, your submission will most likely fail all tests.
+//
+// A better way to test your code is to use the supplied file
+//   Sys.tst
+// with the virtual machine emulator. Please do not submit this
+// file to Gradescope, as this will cause your submission to be
+// rejected.
+//
+function Sys.init 0
+    call Sys.range 2
+label WHILE
+    goto WHILE
