@@ -84,9 +84,9 @@ function Sys.range 2
     pop temp 1
 
 label LOOP
-     push temp 0
-    push argument 1
-    lt
+    push temp 0
+    push temp 1
+    gt
     if-goto COMPUTE_RANGE
 
     push argument 0
@@ -129,6 +129,11 @@ label COMPUTE_RANGE
     push local 0
     sub
     goto RETURN
+
+label SINGLE_ELEMENT
+    push constant 0
+
+label RETURN
     return
 
 
