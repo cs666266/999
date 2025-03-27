@@ -64,78 +64,71 @@ label END
 //
 function Sys.range 2
     // Your implementation goes here.
-    push argument 0
-    pop pointer 1
-    push that 0 
-    pop local 0
-    push that 0 
-    pop local 1
-
     push argument 1
     push constant 1
-    eq
-    if-goto SINGLE_ELEMENT
+    lt
+    if-goto RETURN_ZERO
 
-    push constant 1
-    pop temp 0
+    // Initialize pointers and load first array element
+    push argument 0        // Load the address of the first element
+    pop pointer 1
+    push that 0            // Load the first element
+    pop local 0            // Set local 0 as the initial min
+    push that 0            // Set local 1 as the initial max
+    pop local 1
+
+    // Start iterating over the array
     push argument 1
     push constant 1
     sub
-    pop temp 1
+    pop temp 0             // temp 0 = n - 1 (number of iterations)
 
 label LOOP
     push temp 0
-    push temp 1
-    gt
+    push constant 0
+    eq
     if-goto COMPUTE_RANGE
 
+    // Load the next array element
     push argument 0
     push temp 0
     add
     pop pointer 1
     push that 0
-    pop temp 2
+    pop temp 1             // temp 1 = current array element
 
-    push temp 2
+    // Compute the new min using Sys.min
+    push temp 1
     push local 0
-    lt
-    if-goto UPDATE_ MIN
+    call Sys.min 2
+    pop local 0            // Update min value
 
-    push temp 2
+    // Compute the new max using Sys.max
+    push temp 1
     push local 1
-    gt
-    if-goto UPDATE_MAX
+    call Sys.max 2
+    pop local 1            // Update max value
 
-    goto INCREMENT
-
-label UPDATE_MIN
-    push temp 2
-    pop local 0
-    goto INCREMENT
-
-label UPDATE_MAX
-    push temp 2
-    pop local 1
-
-label INCREMENT
+    // Decrement loop counter
     push temp 0
     push constant 1
-    add
+    sub
     pop temp 0
     goto LOOP
 
 label COMPUTE_RANGE
+    // Compute the range (max - min)
     push local 1
     push local 0
     sub
     goto RETURN
 
-label SINGLE_ELEMENT
+label RETURN_ZERO
     push constant 0
+    goto RETURN
 
 label RETURN
     return
-
 
 
 // The emulator will start executing from here. You can modify
