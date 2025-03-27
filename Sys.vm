@@ -17,7 +17,7 @@ function Sys.min 0
     push argument 1
     goto END
 label ARG0_MIN
-    push argument 1
+    push argument 0
 label END
     return
 
